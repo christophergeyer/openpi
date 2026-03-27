@@ -39,8 +39,26 @@ huggingface-cli login --token <HF_TOKEN>
 ```bash
 uv run python scripts/compute_norm_stats.py --config-name pi0_libero_low_mem_finetune
 ```
+Completed 2026-03-27. 8545 batches, ~63 min on 2 CPU workers. Output: `assets/pi0_libero_low_mem_finetune/physical-intelligence/libero/norm_stats.json`
 
-### 5. Training command (run manually)
+**Norm stats also backed up to S3:**
+```bash
+# Upload
+aws s3 cp assets/pi0_libero_low_mem_finetune/physical-intelligence/libero/norm_stats.json \
+  s3://chris-purina-playground/openpi/assets/pi0_libero_low_mem_finetune/physical-intelligence/libero/norm_stats.json
+
+# Restore (skip recompute)
+aws s3 cp s3://chris-purina-playground/openpi/assets/pi0_libero_low_mem_finetune/physical-intelligence/libero/norm_stats.json \
+  assets/pi0_libero_low_mem_finetune/physical-intelligence/libero/norm_stats.json
+```
+
+### 5. Install system dependencies
+```bash
+sudo apt-get install -y gcc build-essential libgl1 libglib2.0-0
+```
+Required for `evdev` (C compiler) and `opencv` (`libGL`).
+
+### 6. Training command (run manually)
 ```bash
 XLA_PYTHON_CLIENT_MEM_FRACTION=0.9 uv run python scripts/train.py pi0_libero_low_mem_finetune --exp-name=libero_lora
 ```
